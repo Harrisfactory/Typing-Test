@@ -12,15 +12,20 @@ func main() {
 	// Serve frontend static files
 	router.Use(static.Serve("/", static.LocalFile("./views", true)))
 
-	//Setup route group for the API
-	api := router.Group("/api")
+	//Setup regular routing
+	site := router.Group("/")
 	{
-		api.GET("/", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{
-				"message": "pong",
-			})
-		})
+		site.GET("/start", StartTypingTest)
 	}
 
+	//endpoints here
+
 	router.Run(":4000") // 8080/ping
+}
+
+func StartTypingTest(c *gin.Context) {
+	c.Header("Content-Type", "application/json")
+	c.JSON(http.StatusOK, gin.H{
+		"message": "typing test not yet implemented",
+	})
 }
