@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"typing_test/src/typing"
 )
 
 func main() {
@@ -20,12 +21,28 @@ func main() {
 
 	//endpoints here
 
+	//typing test testing
+	tt := typing.TypingTest{
+		Time: 60,
+	}
+
+	tt.GetWords()
+	tt.PrintWords()
+
 	router.Run(":4000") // 8080/ping
 }
 
 func StartTypingTest(c *gin.Context) {
+
+	tt := typing.TypingTest{
+		Time: 60,
+	}
+
+	tt.GetWords()
+	tt.PrintWords()
+
 	c.Header("Content-Type", "application/json")
 	c.JSON(http.StatusOK, gin.H{
-		"message": "typing test not yet implemented",
+		"message": tt.Words,
 	})
 }
