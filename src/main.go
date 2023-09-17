@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"typing_test/src/typing"
@@ -9,25 +8,17 @@ import (
 
 func main() {
 	router := gin.Default()
+	router.LoadHTMLGlob("templates/*")
 
-	// Serve frontend static files
-	router.Use(static.Serve("/", static.LocalFile("./views", true)))
+	//routes
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "index.tmpl", gin.H{
+			"title": "Main website",
+		})
+	})
 
-	//Setup regular routing
-	site := router.Group("/")
-	{
-		site.GET("/start", StartTypingTest)
-	}
-
-	//endpoints here
-
-	//typing test testing
-	tt := typing.TypingTest{
-		Time: 60,
-	}
-
-	tt.GetWords()
-	tt.PrintWords()
+	//start test
+	router.GET("/start", StartTypingTest)
 
 	router.Run(":4000") // 8080/ping
 }
@@ -38,11 +29,12 @@ func StartTypingTest(c *gin.Context) {
 		Time: 60,
 	}
 
-	tt.GetWords()
+	tt.HarvestWords()
 	tt.PrintWords()
 
-	c.Header("Content-Type", "application/json")
-	c.JSON(http.StatusOK, gin.H{
-		"message": tt.Words,
+	c.HTML(http.StatusOK, "typing_page.html", gin.H{
+		"title": "le typing test",
+		"words": tt.Words,
 	})
+
 }

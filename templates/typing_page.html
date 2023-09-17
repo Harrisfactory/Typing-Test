@@ -2,17 +2,76 @@
 	<h1>
 		{{ .title }}
 	</h1>
+	<h2 id="timer">
+
+	</h2>
 	<body>
-	    {{ .words }}
+		<p id="words"></p>
 	</body>
 </html>
 <script>
 	var _words = {{ .words }}
+	var _words_string = _words.join(",");
+	var _key_flag = 0;
+	var _word_counter = 0;
+	var _char_counter = 0;
+	var _timer = 60;
+	var _tme;
+
+
 	window.onkeydown = function(event) {
-	   if (event.keyCode === 81) {
-		  for (let i = 0; i < _words.length; i++) {
-			  console.log(_words[i]);
+		  updateWords();
+		  gameLoop(event.key);
+		  if(_key_flag == 0) {
+			  _key_flag++;
+			  setGame();
 		  }
-	   }
 	};
+
+	//highlights first word, then renders all words.
+	function setGame() {
+		_words[_word_counter] = "<mark>"+_words[_word_counter]+"</mark>";
+		updateWords();
+		_tme = setInterval(updateTimer,1000);
+	}
+
+	function gameLoop(user_char) {
+		console.log(_words[_word_counter-1])
+		console.log(user_char)
+		//turn user space into comma for correct comparison
+		if (user_char == " ") {
+			user_char = ",";
+			_words[_word_counter] = _words[_word_counter].replace(/<\/?mark>/g, '');
+			_words[_word_counter] = "<mark style='background: greenyellow;'>"+_words[_word_counter]+"</mark>";
+			updateWords();
+			//set next word yellow.
+			_word_counter++;
+			_words[_word_counter] = "<mark>"+_words[_word_counter]+"</mark>";
+			//set previous word green
+
+			updateWords();
+		}
+		//compare user input with current char
+		if(_words_string[_char_counter] == user_char) {
+			console.log("correct");
+		}
+		_char_counter++;
+
+
+	}
+
+	function updateWords() {
+		const paragraph = document.getElementById("words");
+		paragraph.innerHTML = _words.join(" ");
+	}
+
+	function updateTimer() {
+		const timer = document.getElementById("timer");
+		timer.textContent = _timer;
+		//end typing test
+		if (_timer <= 0) {
+			clearInterval(_tme);
+		}
+		_timer--;
+	}
 </script>

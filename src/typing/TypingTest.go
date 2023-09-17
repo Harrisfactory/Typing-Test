@@ -14,7 +14,7 @@ type TypingTest struct {
 	Words [250]string
 }
 
-func (tt *TypingTest) GetWords() {
+func (tt *TypingTest) HarvestWords() {
 	file, err := os.Open("word_banks/top_1000_words.txt")
 	if err != nil {
 		log.Fatal(err)
