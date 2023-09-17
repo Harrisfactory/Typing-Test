@@ -1,0 +1,18 @@
+<html>
+	<h1>
+		{{ .title }}
+	</h1>
+	<body>
+	    {{ .words }}
+	</body>
+</html>
+<script>
+	var _words = {{ .words }}
+	window.onkeydown = function(event) {
+	   if (event.keyCode === 81) {
+		  for (let i = 0; i < _words.length; i++) {
+			  console.log(_words[i]);
+		  }
+	   }
+	};
+</script>
