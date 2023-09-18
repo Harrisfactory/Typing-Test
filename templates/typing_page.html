@@ -1,7 +1,5 @@
+{{ template "header.html" }}
 <html>
-	<h1>
-		{{ .title }}
-	</h1>
 	<h2 id="timer">
 
 	</h2>
@@ -9,6 +7,7 @@
 		<p id="words"></p>
 	</body>
 </html>
+{{ template "footer.html" }}
 <script>
 	var _words = {{ .words }}
 	var _words_string = _words.join(",");
@@ -18,7 +17,11 @@
 	var _timer = 60;
 	var _tme;
 
+	var _users_current_word = "";
+	//score is total chars which is divided by 5 = wpm
+	var _score = 0;
 
+	updateWords();
 	window.onkeydown = function(event) {
 		  updateWords();
 		  gameLoop(event.key);
@@ -36,28 +39,39 @@
 	}
 
 	function gameLoop(user_char) {
-		console.log(_words[_word_counter-1])
-		console.log(user_char)
+
 		//turn user space into comma for correct comparison
 		if (user_char == " ") {
 			user_char = ",";
+			//clean previous word from yellow
 			_words[_word_counter] = _words[_word_counter].replace(/<\/?mark>/g, '');
-			_words[_word_counter] = "<mark style='background: greenyellow;'>"+_words[_word_counter]+"</mark>";
+			console.log(_users_current_word);
+			//compare users word with current word
+			if(_users_current_word == _words[_word_counter]) {
+				//mark green for correctness
+				_words[_word_counter] = "<mark style='background: greenyellow;'>"+_words[_word_counter]+"</mark>";
+				_score += _users_current_word.length;
+			} else {
+				//mark red for wrongness
+				_words[_word_counter] = "<mark style='background: red;'>"+_words[_word_counter]+"</mark>";
+			}
+
 			updateWords();
 			//set next word yellow.
 			_word_counter++;
 			_words[_word_counter] = "<mark>"+_words[_word_counter]+"</mark>";
-			//set previous word green
-
+			//erase users current word
+			_users_current_word = "";
 			updateWords();
+		} else {
+			//add letter to users current word
+			_users_current_word = _users_current_word + user_char;
 		}
 		//compare user input with current char
-		if(_words_string[_char_counter] == user_char) {
-			console.log("correct");
-		}
+		//if(_words_string[_char_counter] == user_char) {
+		//	console.log("correct");
+		//}
 		_char_counter++;
-
-
 	}
 
 	function updateWords() {
@@ -71,6 +85,8 @@
 		//end typing test
 		if (_timer <= 0) {
 			clearInterval(_tme);
+			var wpm = _score / 5;
+			alert("your score is " + wpm + "wpm");
 		}
 		_timer--;
 	}
