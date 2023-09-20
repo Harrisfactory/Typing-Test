@@ -1,5 +1,21 @@
 
-
 body {
-    //background: black;
+    background: #181818;
 }
+
+.game-container {
+    color: white;
+    .game-words {
+        font-family: "Lucida Console", "Courier New", monospace;
+        font-size: 26px;
+    }
+}
+
+#end-container {
+    display: none;
+}
+
+th,td {
+    color: white;
+}
+

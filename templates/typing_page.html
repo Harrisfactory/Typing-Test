@@ -1,11 +1,49 @@
 {{ template "header.html" }}
 <html>
-	<h2 id="timer">
-
-	</h2>
-	<body>
-		<p id="words"></p>
-	</body>
+	<div class="container">
+		<div class="game-container">
+			<div class="row">
+				<h2 id="timer">
+					start typing to start
+				</h2>
+			</div>
+			<div class="row">
+				<div id="end-container">
+					<form action="/submit-score" method="POST">your score is: <span id="result-label"></span> wpm!
+						<div class="row align-items-center mb-2">
+							<div class="col">
+								<input type="text" name="display_name" class="form-control" placeholder="display name" />
+							</div>
+							<div class="col">
+								<input type="hidden" id="final-score" name="final-score" value="0" />
+								<button type="submit" class="btn btn-light">Submit</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="row">
+				<p id="words" class="game-words"></p>
+				<h1>Top 10 Scores</h1>
+				<table class="table">
+					<thead>
+					<tr>
+						<th scope="col">Name</th>
+						<th scope="col">Score</th>
+					</tr>
+					</thead>
+					<tbody>
+					{{ range .Scores }}
+					<tr>
+						<td>{{ .Name }}</td>
+						<td>{{ .Score }}</td>
+					</tr>
+					{{ end }}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
 </html>
 {{ template "footer.html" }}
 <script>
@@ -23,12 +61,17 @@
 
 	updateWords();
 	window.onkeydown = function(event) {
-		  updateWords();
-		  gameLoop(event.key);
-		  if(_key_flag == 0) {
-			  _key_flag++;
-			  setGame();
-		  }
+		//prevent scroll on spacebar
+		if(event.keyCode == 32 && event.target == document.body) {
+			event.preventDefault();
+		}
+
+	    updateWords();
+	    gameLoop(event.key);
+	    if(_key_flag == 0) {
+		    _key_flag++;
+		    setGame();
+	    }
 	};
 
 	//highlights first word, then renders all words.
@@ -86,7 +129,10 @@
 		if (_timer <= 0) {
 			clearInterval(_tme);
 			var wpm = _score / 5;
-			alert("your score is " + wpm + "wpm");
+			document.getElementById("result-label").innerHTML = wpm;
+			document.getElementById("final-score").value = wpm;
+
+			document.getElementById("end-container").style.display = "block";
 		}
 		_timer--;
 	}
